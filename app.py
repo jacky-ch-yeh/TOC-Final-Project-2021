@@ -8,27 +8,104 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 from fsm import TocMachine
-from utils import send_text_message
+from utils import send_text_message, send_image_url
 
 load_dotenv()
 
-
 machine = TocMachine(
-    states=["user", "state1", "state2"],
+    states=["user", "menu", "article", "stock_price", "ic", "system", "show_price", "position", "website"],
     transitions=[
         {
             "trigger": "advance",
             "source": "user",
-            "dest": "state1",
-            "conditions": "is_going_to_state1",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
         },
         {
             "trigger": "advance",
-            "source": "user",
-            "dest": "state2",
-            "conditions": "is_going_to_state2",
+            "source": "menu",
+            "dest": "article",
+            "conditions": "is_going_to_article",
         },
-        {"trigger": "go_back", "source": ["state1", "state2"], "dest": "user"},
+        {
+            "trigger": "advance",
+            "source": "menu",
+            "dest": "stock_price",
+            "conditions": "is_going_to_stock_price",
+        },
+        {
+            "trigger": "advance",
+            "source": "stock_price",
+            "dest": "ic",
+            "conditions": "is_going_to_ic",
+        },
+        {
+            "trigger": "advance",
+            "source": "stock_price",
+            "dest": "system",
+            "conditions": "is_going_to_system",
+        },
+        {
+            "trigger": "advance",
+            "source": "ic",
+            "dest": "show_price",
+            "conditions": "is_going_to_show_price",
+        },
+        {
+            "trigger": "advance",
+            "source": "system",
+            "dest": "show_price",
+            "conditions": "is_going_to_show_price",
+        },
+        {
+            "trigger": "advance",
+            "source": "menu",
+            "dest": "position",
+            "conditions": "is_going_to_position",
+        },
+        {
+            "trigger": "advance",
+            "source": "menu",
+            "dest": "website",
+            "conditions": "is_going_to_website",
+        },
+        {
+            "trigger": "advance",
+            "source": "article",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "stock_price",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "ic",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "system",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "show_price",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "position",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {"trigger": "go_back", "source": ["article", "stock_price", "position", "website"], "dest": "user"},
     ],
     initial="user",
     auto_transitions=False,
@@ -104,7 +181,11 @@ def webhook_handler():
         print(f"REQUEST BODY: \n{body}")
         response = machine.advance(event)
         if response == False:
-            send_text_message(event.reply_token, "Not Entering any State")
+            if event.message.text.lower() == 'fsm':
+                send_image_url(event.reply_token, 'https://9503-42-74-88-136.ngrok.io/show-fsm')
+            else:
+                send_text_message(event.reply_token, "請按指示操作哦!")
+            # send_text_message(event.reply_token, "Not Entering any State")
 
     return "OK"
 
