@@ -5,15 +5,15 @@ from flask import Flask, jsonify, request, abort, send_file
 from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, MessageTemplateAction
 
 from fsm import TocMachine
-from utils import send_text_message, send_image_url
+from utils import send_text_message, send_image_url, send_button_message
 
 load_dotenv()
 
 machine = TocMachine(
-    states=["user", "menu", "article", "stock_price", "ic", "system", "show_price", "position", "website"],
+    states=["user", "menu", "article", "info", "ic", "system", "show_info", "position", "website", "coding", "reading"],
     transitions=[
         {
             "trigger": "advance",
@@ -29,33 +29,51 @@ machine = TocMachine(
         },
         {
             "trigger": "advance",
-            "source": "menu",
-            "dest": "stock_price",
-            "conditions": "is_going_to_stock_price",
+            "source": "article",
+            "dest": "article",
+            "conditions": "is_going_to_refind_article",
         },
         {
             "trigger": "advance",
-            "source": "stock_price",
+            "source": "menu",
+            "dest": "info",
+            "conditions": "is_going_to_info",
+        },
+        {
+            "trigger": "advance",
+            "source": "info",
             "dest": "ic",
             "conditions": "is_going_to_ic",
         },
         {
             "trigger": "advance",
-            "source": "stock_price",
+            "source": "info",
             "dest": "system",
             "conditions": "is_going_to_system",
         },
         {
             "trigger": "advance",
             "source": "ic",
-            "dest": "show_price",
-            "conditions": "is_going_to_show_price",
+            "dest": "show_info",
+            "conditions": "is_going_to_show_info",
         },
         {
             "trigger": "advance",
             "source": "system",
-            "dest": "show_price",
-            "conditions": "is_going_to_show_price",
+            "dest": "show_info",
+            "conditions": "is_going_to_show_info",
+        },
+        {
+            "trigger": "advance",
+            "source": "show_info",
+            "dest": "ic",
+            "conditions": "is_going_to_ic",
+        },
+        {
+            "trigger": "advance",
+            "source": "show_info",
+            "dest": "system",
+            "conditions": "is_going_to_system",
         },
         {
             "trigger": "advance",
@@ -71,13 +89,25 @@ machine = TocMachine(
         },
         {
             "trigger": "advance",
+            "source": "website",
+            "dest": "coding",
+            "conditions": "is_going_to_coding",
+        },
+        {
+            "trigger": "advance",
+            "source": "website",
+            "dest": "reading",
+            "conditions": "is_going_to_reading",
+        },
+        {
+            "trigger": "advance",
             "source": "article",
             "dest": "menu",
             "conditions": "is_going_to_menu",
         },
         {
             "trigger": "advance",
-            "source": "stock_price",
+            "source": "info",
             "dest": "menu",
             "conditions": "is_going_to_menu",
         },
@@ -95,7 +125,7 @@ machine = TocMachine(
         },
         {
             "trigger": "advance",
-            "source": "show_price",
+            "source": "show_info",
             "dest": "menu",
             "conditions": "is_going_to_menu",
         },
@@ -105,7 +135,25 @@ machine = TocMachine(
             "dest": "menu",
             "conditions": "is_going_to_menu",
         },
-        {"trigger": "go_back", "source": ["article", "stock_price", "position", "website"], "dest": "user"},
+        {
+            "trigger": "advance",
+            "source": "website",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "coding",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        {
+            "trigger": "advance",
+            "source": "reading",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
+        #{"trigger": "go_back", "source": ["article", "info", "position", "website"], "dest": "user"},
     ],
     initial="user",
     auto_transitions=False,
@@ -182,10 +230,17 @@ def webhook_handler():
         response = machine.advance(event)
         if response == False:
             if event.message.text.lower() == 'fsm':
-                send_image_url(event.reply_token, 'https://9503-42-74-88-136.ngrok.io/show-fsm')
+                send_image_url(event.reply_token, 'https://2a18-42-75-147-16.ngrok.io/show-fsm')
             else:
-                send_text_message(event.reply_token, "請按指示操作哦!")
-            # send_text_message(event.reply_token, "Not Entering any State")
+                title = '【提醒】'
+                text = '請依照按鈕指示進行操作哦!'
+                btn = [
+                    MessageTemplateAction(
+                        label = '返回主選單',
+                        text = '主選單'
+                    ),
+                ]
+                send_button_message(event.reply_token, title, text, btn)
 
     return "OK"
 

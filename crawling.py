@@ -31,6 +31,7 @@ def search_stock_price(stock_num):
     market_time = stock_date[11:16]  #時間
 
     stock_price = soup.find('span', {'class': 'Fw(600) Fz(16px)--mobile Fz(14px) D(f) Ai(c)'}).getText()
+    # stock_price = soup.find('span', {'class': 'Fw(600) Fz(16px)--mobile Fz(14px) D(f) Ai(c) C($c-trend-up)'}).getText()
     data = (market_date, market_time, stock_name, stock_price)
 
     return data
