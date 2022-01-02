@@ -153,6 +153,12 @@ machine = TocMachine(
             "dest": "menu",
             "conditions": "is_going_to_menu",
         },
+        {
+            "trigger": "advance",
+            "source": "menu",
+            "dest": "menu",
+            "conditions": "is_going_to_menu",
+        },
         #{"trigger": "go_back", "source": ["article", "info", "position", "website"], "dest": "user"},
     ],
     initial="user",
@@ -230,7 +236,7 @@ def webhook_handler():
         response = machine.advance(event)
         if response == False:
             if event.message.text.lower() == 'fsm':
-                send_image_url(event.reply_token, 'https://2a18-42-75-147-16.ngrok.io/show-fsm')
+                send_image_url(event.reply_token, 'https://c536-42-74-145-132.ngrok.io/show-fsm')
             else:
                 title = '【提醒】'
                 text = '請依照按鈕指示進行操作哦!'
