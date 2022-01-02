@@ -1,159 +1,51 @@
-# TOC Project 2020
+# TOC Project 2021
+> Linebot 實作
+> Due date: 2022/1/2 12pm
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/dc7fa47fcd809b99d087/maintainability)](https://codeclimate.com/github/NCKU-CCS/TOC-Project-2020/maintainability)
+## 創立主旨
+身為電資學院的一份子，一定都對將來就業有很多憧憬，  
+但我們每天忙碌於課業，對於台灣的科技公司(特別是本土)卻十分不了解，  
+於是我就想做出一個能讓我們更能了解、關心科技業的app
 
-[![Known Vulnerabilities](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020/badge.svg)](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020)
+## 介紹
+### 基本資訊
+名稱：TechBot
+![](https://cdn.discordapp.com/attachments/755734650613399613/927122751095963688/unknown.png)
 
+首先先幫我加入一下好友 :3
+可以使用搜尋ID(記得要打"@")或掃QR Code
 
-Template Code for TOC Project 2020
+![image](https://user-images.githubusercontent.com/76469551/147871487-066199af-766c-4c2a-a228-5eb10f83946a.png)
 
-A Line bot based on a finite state machine
+### 功能
+這是它的選單
+![image](https://user-images.githubusercontent.com/76469551/147871361-4694f246-59a3-4cee-9fff-7ea684ef097d.png)
 
-More details in the [Slides](https://hackmd.io/@TTW/ToC-2019-Project#) and [FAQ](https://hackmd.io/s/B1Xw7E8kN)
+1. 找話題: 它可以尋找有趣的話題(支援重新找一個話題)
+2. 探索公司: 它可以選擇不同類型的科技廠，並介紹選擇的企業
+3. 科技業職稱簡介: 它可以介紹各種職位的簡稱
+4. 精進自己: 它可以推薦實用的Coding/Reading網站，讓我們學習並進步
 
-## Setup
++ 透過「找話題」，TechBot會推薦一個話題文章給你，同時不喜歡也可以換一篇文章
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129041004277760/unknown.png)
 
-### Prerequisite
-* Python 3.6
-* Pipenv
-* Facebook Page and App
-* HTTPS Server
++ 透過「探索公司」，可以根據選擇的公司類型，找到感興趣的企業，  
++ 然後去更了解這間公司的歷史，並透過股價了解它的發展
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129085585551390/unknown.png)
+![image](https://user-images.githubusercontent.com/76469551/147871713-96842979-fdc1-4ae9-a862-9047214e12a8.png)
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129155483619378/unknown.png)
 
-#### Install Dependency
-```sh
-pip3 install pipenv
++ 透過「科技業職稱簡介」，它會介紹各種常見的職位簡稱，這樣就不會每次都聽不懂很多前輩在說什麼職稱了
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129200262021150/unknown.png)
 
-pipenv --three
++ 選擇「精進自己」，他會根據你想提升的面向(Coding/Reading)，提供對應的網站
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129241827557446/unknown.png)
+![](https://cdn.discordapp.com/attachments/755734650613399613/927129281585360896/unknown.png)
 
-pipenv install
-
-pipenv shell
-```
-
-* pygraphviz (For visualizing Finite State Machine)
-    * [Setup pygraphviz on Ubuntu](http://www.jianshu.com/p/a3da7ecc5303)
-	* [Note: macOS Install error](https://github.com/pygraphviz/pygraphviz/issues/100)
-
-
-#### Secret Data
-You should generate a `.env` file to set Environment Variables refer to our `.env.sample`.
-`LINE_CHANNEL_SECRET` and `LINE_CHANNEL_ACCESS_TOKEN` **MUST** be set to proper values.
-Otherwise, you might not be able to run your code.
-
-#### Run Locally
-You can either setup https server or using `ngrok` as a proxy.
-
-#### a. Ngrok installation
-* [ macOS, Windows, Linux](https://ngrok.com/download)
-
-or you can use Homebrew (MAC)
-```sh
-brew cask install ngrok
-```
-
-**`ngrok` would be used in the following instruction**
-
-```sh
-ngrok http 8000
-```
-
-After that, `ngrok` would generate a https URL.
-
-#### Run the sever
-
-```sh
-python3 app.py
-```
-
-#### b. Servo
-
-Or You can use [servo](http://serveo.net/) to expose local servers to the internet.
+## Fsm 結構圖
+![](https://cdn.discordapp.com/attachments/755734650613399613/927122068535902238/fsm.png)
 
 
-## Finite State Machine
-![fsm](./img/show-fsm.png)
+> 作者：　葉承軒／成功大學資訊系112
+> 最後編輯時間：　2022/1/2
 
-## Usage
-The initial state is set to `user`.
-
-Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
-
-* user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
-
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
-
-## Deploy
-Setting to deploy webhooks on Heroku.
-
-### Heroku CLI installation
-
-* [macOS, Windows](https://devcenter.heroku.com/articles/heroku-cli)
-
-or you can use Homebrew (MAC)
-```sh
-brew tap heroku/brew && brew install heroku
-```
-
-or you can use Snap (Ubuntu 16+)
-```sh
-sudo snap install --classic heroku
-```
-
-### Connect to Heroku
-
-1. Register Heroku: https://signup.heroku.com
-
-2. Create Heroku project from website
-
-3. CLI Login
-
-	`heroku login`
-
-### Upload project to Heroku
-
-1. Add local project to Heroku project
-
-	heroku git:remote -a {HEROKU_APP_NAME}
-
-2. Upload project
-
-	```
-	git add .
-	git commit -m "Add code"
-	git push -f heroku master
-	```
-
-3. Set Environment - Line Messaging API Secret Keys
-
-	```
-	heroku config:set LINE_CHANNEL_SECRET=your_line_channel_secret
-	heroku config:set LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
-	```
-
-4. Your Project is now running on Heroku!
-
-	url: `{HEROKU_APP_NAME}.herokuapp.com/callback`
-
-	debug command: `heroku logs --tail --app {HEROKU_APP_NAME}`
-
-5. If fail with `pygraphviz` install errors
-
-	run commands below can solve the problems
-	```
-	heroku buildpacks:set heroku/python
-	heroku buildpacks:add --index 1 heroku-community/apt
-	```
-
-	refference: https://hackmd.io/@ccw/B1Xw7E8kN?type=view#Q2-如何在-Heroku-使用-pygraphviz
-
-## Reference
-[Pipenv](https://medium.com/@chihsuan/pipenv-更簡單-更快速的-python-套件管理工具-135a47e504f4) ❤️ [@chihsuan](https://github.com/chihsuan)
-
-[TOC-Project-2019](https://github.com/winonecheng/TOC-Project-2019) ❤️ [@winonecheng](https://github.com/winonecheng)
-
-Flask Architecture ❤️ [@Sirius207](https://github.com/Sirius207)
-
-[Line line-bot-sdk-python](https://github.com/line/line-bot-sdk-python/tree/master/examples/flask-echo)
